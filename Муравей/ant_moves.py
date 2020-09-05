@@ -8,123 +8,31 @@
 Прислать ответ в виде числа клеток, решения на языке Python и скрипта на языке JavaScript, отрисовывающего
 на canvas площадь доступную муравью."""
 
-import sys
 
-
-def point():
-    sys.stdout.write('')
-    sys.stdout.flush()
-
-
-def forward_and_up(in_x, in_y, sums=0):
-    print('forward_and_up')
-    x = in_x
-    y = in_y
-    c = 0
-    while sums <= 25:
-        c += 1
-        if c % 500 == 0:
-            point()
-        xs = list(map(int, str(x)))
-        ys = list(map(int, str(y)))
-        sums = sum(xs) + sum(ys)
-        if sums <= 25 and (x, y) not in points:
-            points.append((x, y))
-            x += 1
-        else:
-            x = in_x
-            y += 1
-            xs = list(map(int, str(x)))
-            ys = list(map(int, str(y)))
-            sums = sum(xs) + sum(ys)
-            continue
-    print()
-
-
-def forward_and_down(in_x, in_y, sums=0):
-    print('forward_and_down')
-    x = in_x
-    y = in_y
-    c = 0
-    while sums <= 25:
-        c += 1
-        if c % 10 == 0:
-            point()
-        xs = list(map(int, str(x)))
-        ys = list(map(int, str(y)))
-        sums = sum(xs) + sum(ys)
-        if sums <= 25 and (x, y) not in points:
-            points.append((x, y))
-            x += 1
-        else:
-            x = in_x
-            y -= 1
-            xs = list(map(int, str(x)))
-            ys = list(map(int, str(y)))
-            sums = sum(xs) + sum(ys)
-            continue
-    print()
-
-
-def backward_and_up(in_x, in_y, sums=0):
-    print('backward_and_up')
-    x = in_x
-    y = in_y
-    c = 0
-    while sums <= 25:
-        c += 1
-        if c % 10 == 0:
-            point()
-        xs = list(map(int, str(x)))
-        ys = list(map(int, str(y)))
-        sums = sum(xs) + sum(ys)
-        if sums <= 25 and (x, y) not in points:
-            points.append((x, y))
-            x -= 1
-        else:
-            x = in_x
-            y += 1
-            xs = list(map(int, str(x)))
-            ys = list(map(int, str(y)))
-            sums = sum(xs) + sum(ys)
-            continue
-    print()
-
-
-def backward_and_down(in_x, in_y, sums=0):
-    print('backward_and_down')
-    x = in_x
-    y = in_y
-    c = 0
-    while sums <= 25:
-        c += 1
-        if c % 10 == 0:
-            point()
-        xs = list(map(int, str(x)))
-        ys = list(map(int, str(y)))
-        sums = sum(xs) + sum(ys)
-        if sums <= 25 and (x, y) not in points:
-            print((x, y))
-            points.append((x, y))
-            x -= 1
-        else:
-            x = in_x
-            y -= 1
-            xs = list(map(int, str(x)))
-            ys = list(map(int, str(y)))
-            sums = sum(xs) + sum(ys)
-            continue
-    print()
+def sum_of_digits(*args: int) -> int:
+    sums = 0
+    for num in args:
+        for digit in str(num):
+            sums += int(digit)
+    return sums
 
 
 if __name__ == '__main__':
-    x, y = 1000, 1000
-    points = []
+    points_to_visit = {(1000, 1000)}
+    visited_points = {()}
 
-    forward_and_up(x, y)
-    forward_and_down(x, y)
-    backward_and_up(x, y)
-    backward_and_down(x, y)
+    while points_to_visit:
+        current_position = points_to_visit.pop()
+        x, y = current_position
+        visited_points.add(current_position)
+        next_points = [(x, y + 1), (x, y - 1), (x + 1, y), (x - 1, y)]
 
-    # print(sorted(points))
-    print(len(points))
+        available = [pos for pos in next_points
+                     if sum_of_digits(*pos) <= 25
+                     and pos not in visited_points
+                     and pos not in points_to_visit]
+
+        for next_pos in available:
+            points_to_visit.add(next_pos)
+
+    print('\n', len(visited_points))
